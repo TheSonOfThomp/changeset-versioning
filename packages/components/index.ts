@@ -1,1 +1,3 @@
-export default "Components-major!"
+export default [
+  "Components-major!"
+]
