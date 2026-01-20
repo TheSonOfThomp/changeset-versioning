@@ -1,0 +1,38 @@
+name: Merge to next
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  merge-to-next:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: git fetch origin
+
+      - name: Checkout next branch
+        run: git checkout next
+
+      - name: Merge main into next
+        run: git merge --no-ff origin/main -m "Merge main into next"
+
+      - name: Push to next
+        run: git push origin next
