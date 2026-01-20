@@ -26,7 +26,7 @@ jobs:
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
         with:
-          title: Minor/Patch Release
+          title: "🦋 Minor/Patch Release"
           version: pnpm changeset version
           # This executes the publish command defined in package.json
           publish: pnpm changeset publish
