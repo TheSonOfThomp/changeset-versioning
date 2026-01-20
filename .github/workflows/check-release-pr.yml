@@ -1,0 +1,43 @@
+name: Check Release PR
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - next
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check-minor-patch-release:
+    runs-on: ubuntu-latest
+    # If this is a Major Release PR
+    if: contains(github.event.pull_request.title, '🦋 Major Release')
+    steps:
+      - name: Check for open Minor/Patch Release PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              base: 'main',
+            });
+
+            const minorPatchPRs = prs.filter(pr => 
+              pr.title.includes('🦋 Minor/Patch Release')
+            );
+
+            if (minorPatchPRs.length > 0) {
+              const prLinks = minorPatchPRs.map(pr => 
+                `[#${pr.number}](${pr.html_url})`
+              ).join(', ');
+              core.setFailed(`Cannot merge Major Release PR while Minor/Patch Release PRs are open: ${prLinks}`);
+            } else {
+              core.info('No open Minor/Patch Release PRs found. Major Release PR can be merged.');
+            }
