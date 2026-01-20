@@ -18,18 +18,71 @@ jobs:
     name: "Major release"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - run: pnpm install
-      - run: pnpm build
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: git fetch origin
+
+      - name: Checkout main
+        run: git checkout main
+
+      - name: Checkout next
+        run: git checkout next
+
+      - name: Attempt to merge main into next
+        id: merge
+        continue-on-error: true
+        run: |
+          git merge --no-ff origin/main -m "Merge main into next" || exit 1
+
+      - name: Push merge if successful
+        if: steps.merge.outcome == 'success'
+        run: git push origin next
+
+      - name: Abort merge if conflicts
+        if: steps.merge.outcome == 'failure'
+        run: git merge --abort || true
+
+      - name: Create PR if merge conflicts
+        if: steps.merge.outcome == 'failure'
+        run: |
+          gh pr create \
+            --base next \
+            --head main \
+            --title "🦋 Merge main into next" \
+            --body "This PR was automatically created because there are merge conflicts when attempting to merge \`main\` into \`next\`. Please resolve the conflicts and merge this PR manually."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        if: steps.merge.outcome == 'success'
+        uses: pnpm/action-setup@v2
+
+      - name: Install dependencies
+        if: steps.merge.outcome == 'success'
+        run: pnpm install
+
+      - name: Build
+        if: steps.merge.outcome == 'success'
+        run: pnpm build
 
       # Create Release Pull Request or Publish
       - name: Create Release Pull Request or Publish
+        if: steps.merge.outcome == 'success'
         uses: changesets/action@v1
         with:
+          # On every merge to `next`, create a Major Release PR
           title: "🦋 Major Release"
           version: pnpm changeset version
-          # This executes the publish command defined in package.json
+          # When the Major Release PR is merged
           publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
