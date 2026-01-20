@@ -1,12 +1,12 @@
 name: Release
 
-# On push to main
-# - open a "Minor/Patch Release" PR targeted at `main`
+# On push to `next`
+# - open a "Major Release" PR targeted at `main`
 
 on:
   push:
     branches:
-      - main
+      - next
 
 permissions:
   id-token: write
@@ -26,7 +26,7 @@ jobs:
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
         with:
-          title: Minor/Patch Release
+          title: Major Release
           version: pnpm changeset version
           # This executes the publish command defined in package.json
           publish: pnpm changeset publish

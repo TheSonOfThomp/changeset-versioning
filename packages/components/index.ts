@@ -1,1 +1,1 @@
-export default "Components"
+export default "Components-minor"
