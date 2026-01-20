@@ -1,4 +1,4 @@
-name: Release
+name: Major Release
 
 # On push to `next`
 # - open a "Major Release" PR targeted at `main`
