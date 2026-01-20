@@ -2,6 +2,7 @@ name: Release
 
 # On push to main
 # - open a "Minor/Patch Release" PR targeted at `main`
+# - should this just merge & publish automatically?
 
 on:
   push:
@@ -15,6 +16,7 @@ permissions:
 
 jobs:
   release:
+    name: "Minor Release"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
