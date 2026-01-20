@@ -1,4 +1,4 @@
-name: Release
+name: Minor/Patch Release
 
 # On push to main
 # - open a "Minor/Patch Release" PR targeted at `main`
@@ -16,7 +16,6 @@ permissions:
 
 jobs:
   release:
-    name: "Minor Release"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

@@ -1,4 +1,4 @@
-name: Release
+name: Major Release
 
 # On push to `next`
 # - open a "Major Release" PR targeted at `main`
@@ -15,7 +15,6 @@ permissions:
 
 jobs:
   release:
-    name: "Major release"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
