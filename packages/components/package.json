@@ -1,9 +1,14 @@
 {
-  "name": "changeset-versioning-components",
+  "name": "@thesonofthomp/changeset-versioning-components",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "npx tsup index.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

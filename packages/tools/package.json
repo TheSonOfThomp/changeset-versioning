@@ -1,9 +1,14 @@
 {
-  "name": "changeset-versioning-tools",
+  "name": "@thesonofthomp/changeset-versioning-tools",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "npx tsup index.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
