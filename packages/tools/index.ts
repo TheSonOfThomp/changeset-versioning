@@ -1,1 +1,1 @@
-export default "Tools-minor"
+export default ["Tools-minor"]
