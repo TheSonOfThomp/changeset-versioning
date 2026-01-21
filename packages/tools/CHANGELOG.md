@@ -1,5 +1,11 @@
 # @thesonofthomp/changeset-versioning-tools
 
+## 1.0.0
+
+### Major Changes
+
+- 018a7cb: Updates tool default export to array
+
 ## 1.0.0-next.0
 
 ### Major Changes
