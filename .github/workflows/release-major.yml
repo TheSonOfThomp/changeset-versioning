@@ -35,7 +35,8 @@ jobs:
       - name: Create Major Release PR
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: changesets/major
+          branch: next
           title: "🤖 Merge Next"
           base: main
           token: ${{ secrets.GITHUB_TOKEN }}
+          delete-branch: true
