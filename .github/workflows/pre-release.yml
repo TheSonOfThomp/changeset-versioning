@@ -32,23 +32,31 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Update baseBranch to next
-        run: |
-          # Temporarily modify changeset config to use next as baseBranch
-          # Note: changesets/action doesn't support baseBranch as an input parameter, so we must modify the config file directly
-          jq -i '.baseBranch = "next"' .changeset/config.json
-
       - name: Enter changeset pre mode
         run: |
           pnpm changeset pre enter next || echo "Pre mode may already be active"
 
       - name: Create Pre-Release PR
+        id: changesets
         uses: changesets/action@v1
         with:
           title: "🦋 PRE-RELEASE"
           version: pnpm changeset version
           publish: pnpm changeset publish
-          commit: "chore: version packages for pre-release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Exit changeset pre mode if published
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          pnpm changeset pre exit
+
+      - name: Commit pre mode exit
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .changeset/config.json
+          git commit -m "chore: exit changeset pre mode"
+          git push

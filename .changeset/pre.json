@@ -1,0 +1,12 @@
+{
+  "mode": "exit",
+  "tag": "next",
+  "initialVersions": {
+    "@thesonofthomp/changeset-versioning-components": "0.1.1",
+    "@thesonofthomp/changeset-versioning-tools": "0.2.1"
+  },
+  "changesets": [
+    "fancy-spiders-press",
+    "seven-seals-count"
+  ]
+}

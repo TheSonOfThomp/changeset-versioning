@@ -1,7 +1,7 @@
 name: Major Release
 
 # On PRs into `next`
-# - open a "Major Release" PR targeted at `main`
+# - open/updates a "Major Release" PR targeted at `main`
 
 on:
   push:
@@ -32,18 +32,26 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # Create Release Pull Request or Publish
-      - name: Create Release Pull Request or Publish
-        uses: changesets/action@v1
+      - name: Create Major Release PR
+        uses: actions/github-script@v7
         with:
-          # On every PR to `next`, create a Major Release PR targeted at main.
-          # The changesets action uses baseBranch from .changeset/config.json (set to "main")
-          # to determine the target branch for the release PR.
-          title: "🦋 MAJOR_RELEASE"
-          version: pnpm changeset version
-          # When the Major Release PR is merged
-          publish: pnpm changeset publish
-          commit: "chore: version packages for major release"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          script: |
+            const { data: existingPRs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: `${context.repo.owner}:next`,
+              base: 'main'
+            });
+
+            const pr = existingPRs[0] || (await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🤖 Merge Next',
+              head: 'next',
+              base: 'main'
+            })).data;
+
+            console.log(`PR #${pr.number}: ${pr.html_url}`);
+            core.setOutput('pr-number', pr.number);
+            core.setOutput('pr-url', pr.html_url);
