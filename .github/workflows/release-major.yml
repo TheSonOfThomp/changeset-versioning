@@ -32,10 +32,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Exit changeset pre mode
-        run: |
-          pnpm changeset pre exit;
-
       - name: Create Major Release PR
         uses: peter-evans/create-pull-request@v5
         with:
