@@ -32,20 +32,13 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Update baseBranch to main
-        run: |
-          # Temporarily modify changeset config to use main as baseBranch
-          # Note: changesets/action doesn't support baseBranch as an input parameter, so we must modify the config file directly
-          # The baseBranch determines which branch the version PR will target
-          jq '.baseBranch = "main"' .changeset/config.json > .changeset/config.json.tmp && mv .changeset/config.json.tmp .changeset/config.json
-
       # Create Release Pull Request or Publish
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
         with:
           # On every PR to `next`, create a Major Release PR targeted at main.
-          # The changesets action uses baseBranch from .changeset/config.json (set to "main")
-          # to determine the target branch for the release PR.
+          # Note: The changesets action will initially target the current branch (next),
+          # but we'll change it to main in the next step.
           title: "🦋 MAJOR_RELEASE"
           version: pnpm changeset version
           # When the Major Release PR is merged
@@ -54,3 +47,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Change PR target branch to main
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const headBranch = `changeset-release/${context.ref.replace('refs/heads/', '')}`;
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: headBranch
+            });
+
+            const pr = prs.find(p => p.title === '🦋 MAJOR_RELEASE');
+            if (pr && pr.base.ref !== 'main') {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                base: 'main'
+              });
+              console.log(`Changed PR #${pr.number} target from ${pr.base.ref} to main`);
+            }
