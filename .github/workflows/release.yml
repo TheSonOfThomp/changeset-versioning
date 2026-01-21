@@ -1,11 +1,14 @@
-name: Minor/Patch Release
+name: Patch Release
 
-# On push to main
-# - open a "Minor/Patch Release" PR targeted at `main`
-# - should this just merge & publish automatically?
+# On PRs into main
+# - open a "Patch Release" PR targeted at `main`
 
 on:
-  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
     branches:
       - main
 
@@ -16,22 +19,34 @@ permissions:
 
 jobs:
   release:
-    name: "Minor Release"
+    name: "Patch Release"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - run: pnpm install
-      - run: pnpm build
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
 
       # Create Release Pull Request or Publish
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
         with:
-          title: "🦋 Minor/Patch Release"
+          title: "🦋 PATCH_RELEASE"
           version: pnpm changeset version
           # This executes the publish command defined in package.json
           publish: pnpm changeset publish
+          commit: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
