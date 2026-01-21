@@ -1,7 +1,7 @@
-name: Major Release
+name: Pre-Release
 
 # On PRs into `next`
-# - open a "Major Release" PR targeted at `main`
+# - open a "Pre-Release" PR targeted at `next`
 
 on:
   pull_request:
@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   release:
-    name: "Major Release"
+    name: "Pre-Release"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,18 +36,23 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # Create Release Pull Request or Publish
-      - name: Create Release Pull Request or Publish
+      - name: Update baseBranch to next
+        run: |
+          # Temporarily modify changeset config to use next as baseBranch
+          # Note: changesets/action doesn't support baseBranch as an input parameter, so we must modify the config file directly
+          jq -i '.baseBranch = "next"' .changeset/config.json
+
+      - name: Enter changeset pre mode
+        run: |
+          pnpm changeset pre enter next || echo "Pre mode may already be active"
+
+      - name: Create Pre-Release PR
         uses: changesets/action@v1
         with:
-          # On every PR to `next`, create a Major Release PR targeted at main.
-          # The changesets action uses baseBranch from .changeset/config.json (set to "main")
-          # to determine the target branch for the release PR.
-          title: "🦋 MAJOR_RELEASE"
+          title: "🦋 PRE-RELEASE"
           version: pnpm changeset version
-          # When the Major Release PR is merged
           publish: pnpm changeset publish
-          commit: "chore: version packages for major release"
+          commit: "chore: version packages for pre-release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

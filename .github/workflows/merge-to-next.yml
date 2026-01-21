@@ -1,9 +1,37 @@
 name: Merge to next
 
+# Sync all merges into main to next branch
+#
+# CONFIGURATION FOR PAID REPOS/ORGS (Team plan $4/user/month or Enterprise):
+# This workflow requires bypass permissions in Rulesets to push directly to 'next' branch.
+#
+# Option 1: GitHub App (Recommended)
+#   1. Create a GitHub App: Organization Settings → Developer settings → GitHub Apps → New GitHub App
+#      - Set repository permissions: Contents (Read and write)
+#      - Install the app on your repository
+#   2. Generate an installation token (use GitHub API or a script)
+#   3. Store the token as repository secret: MERGE_BOT_TOKEN
+#   4. Add the GitHub App to Rulesets bypass list:
+#      Settings → Rules → [Select ruleset for 'next'] → Bypass list → Add bypass → Search for your app
+#
+# Option 2: Personal Access Token (PAT)
+#   1. Create Fine-Grained PAT: Settings → Developer settings → Fine-grained tokens
+#      - Repository access: Select your repository
+#      - Permissions: Contents (Read and write)
+#   2. Store the PAT as repository secret: MERGE_BOT_TOKEN
+#   3. Add yourself (or a team you're in) to Rulesets bypass list:
+#      Settings → Rules → [Select ruleset for 'next'] → Bypass list → Add bypass → Search for user/team
+#
+# The workflow will use MERGE_BOT_TOKEN if available, otherwise falls back to GITHUB_TOKEN.
+# Note: Free plans only support Rulesets for public repos. Private repos require Team plan or higher.
+#
 on:
   pull_request:
     types:
       - closed
+    branches:
+      - main
+  push:
     branches:
       - main
 
@@ -13,17 +41,21 @@ permissions:
 jobs:
   merge-to-next:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          # Uses MERGE_BOT_TOKEN if configured, otherwise falls back to GITHUB_TOKEN
+          token: ${{ secrets.MERGE_BOT_TOKEN || github.token }}
 
       - name: Configure Git
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "Adam Thompson"
+          git config user.email "2414030+TheSonOfThomp@users.noreply.github.com"
 
       - name: Fetch all branches
         run: git fetch origin
