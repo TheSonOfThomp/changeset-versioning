@@ -4,11 +4,7 @@ name: Pre-Release
 # - open a "Pre-Release" PR targeted at `next`
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
+  push:
     branches:
       - next
 
