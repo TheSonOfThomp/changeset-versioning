@@ -19,9 +19,7 @@ if [ -z "${GITHUB_OUTPUT:-}" ]; then
   # export GITHUB_OUTPUT
 fi
 
-# Run changeset status once and check for major changes
-# Check directly in the pipeline to avoid variable issues
-# Use || true to prevent pipefail from causing script failure
+# Run changeset status and check for major changes
 if pnpm changeset status 2>&1 | grep -q "bumped at major"; then
   echo "has_major=true" >> "${GITHUB_OUTPUT}"
   echo "Major changes detected in changesets"
