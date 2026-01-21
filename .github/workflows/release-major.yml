@@ -47,7 +47,6 @@ jobs:
           version: pnpm changeset version
           # When the Major Release PR is merged
           publish: pnpm changeset publish
-          commit: "chore: version packages for major release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
