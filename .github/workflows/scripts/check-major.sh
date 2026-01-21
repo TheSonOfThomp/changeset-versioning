@@ -16,6 +16,8 @@ if [ -z "${GITHUB_OUTPUT:-}" ]; then
   exit 1
 fi
 
+pnpm changeset status;
+
 if pnpm changeset status 2>&1 | grep -q "Packages to be bumped at major"; then
   echo "has_major=true" >> "${GITHUB_OUTPUT}"
   echo "Major changes detected in changesets"
