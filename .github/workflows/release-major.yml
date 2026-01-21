@@ -1,7 +1,7 @@
 name: Major Release
 
 # On PRs into `next`
-# - open a "Major Release" PR targeted at `main`
+# - open/updates a "Major Release" PR targeted at `main`
 
 on:
   push:
@@ -34,18 +34,13 @@ jobs:
 
       - name: Exit changeset pre mode
         run: |
-          pnpm changeset pre exit || echo "Pre mode may already be active"
-
-      - name: Check for changesets and version packages
-        id: version
-        run: .github/workflows/scripts/version-packages.sh
+          pnpm changeset pre exit;
 
       - name: Create Major Release PR
-        if: steps.version.outputs.version_updated == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
+          skip-if-pr-exists: true
           branch: changesets/major
-          title: "🦋 MAJOR_RELEASE"
+          title: "🤖 Merge Next"
           base: main
-          commit-message: "chore: version packages for major release"
           token: ${{ secrets.GITHUB_TOKEN }}
