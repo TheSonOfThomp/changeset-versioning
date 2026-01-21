@@ -29,11 +29,13 @@ jobs:
 
       - name: Check for major changesets
         id: check_changesets
+        shell: bash
         run: bash .github/workflows/scripts/check-major.sh
 
       - name: Check if `next` branch exists
         if: steps.check_changesets.outputs.has_major == 'true'
         id: next_branch
+        shell: bash
         run: bash .github/workflows/scripts/check-next.sh
 
       - name: Create next branch

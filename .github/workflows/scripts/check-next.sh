@@ -9,10 +9,17 @@
 # the 'next' branch needs to be created before redirecting PRs with major
 # changes from 'main' to 'next'.
 
+set -euo pipefail
+
+if [ -z "${GITHUB_OUTPUT:-}" ]; then
+  echo "Error: GITHUB_OUTPUT is not set" >&2
+  exit 1
+fi
+
 if git ls-remote --heads origin next | grep -q next; then
-  echo "exists=true" >> $GITHUB_OUTPUT
+  echo "exists=true" >> "${GITHUB_OUTPUT}"
   echo "next branch already exists"
 else
-  echo "exists=false" >> $GITHUB_OUTPUT
+  echo "exists=false" >> "${GITHUB_OUTPUT}"
   echo "next branch does not exist"
 fi
