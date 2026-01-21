@@ -32,6 +32,13 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Update baseBranch to main
+        run: |
+          # Temporarily modify changeset config to use main as baseBranch
+          # Note: changesets/action doesn't support baseBranch as an input parameter, so we must modify the config file directly
+          # The baseBranch determines which branch the version PR will target
+          jq '.baseBranch = "main"' .changeset/config.json > .changeset/config.json.tmp && mv .changeset/config.json.tmp .changeset/config.json
+
       # Create Release Pull Request or Publish
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1

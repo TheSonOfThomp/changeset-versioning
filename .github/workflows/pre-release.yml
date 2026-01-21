@@ -32,12 +32,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Update baseBranch to next
-        run: |
-          # Temporarily modify changeset config to use next as baseBranch
-          # Note: changesets/action doesn't support baseBranch as an input parameter, so we must modify the config file directly
-          jq -i '.baseBranch = "next"' .changeset/config.json
-
       - name: Enter changeset pre mode
         run: |
           pnpm changeset pre enter next || echo "Pre mode may already be active"
