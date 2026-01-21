@@ -6,6 +6,7 @@
     "@thesonofthomp/changeset-versioning-tools": "0.2.1"
   },
   "changesets": [
-    "fancy-spiders-press"
+    "fancy-spiders-press",
+    "seven-seals-count"
   ]
 }
