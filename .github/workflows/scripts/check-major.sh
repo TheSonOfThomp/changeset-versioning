@@ -9,13 +9,14 @@
 # PRs with major changes from the `main` branch to the `next` branch, keeping
 # major releases separate from patch/minor releases.
 
-set -euo pipefail
+set -uo pipefail
 
 if [ -z "${GITHUB_OUTPUT:-}" ]; then
   echo "Error: GITHUB_OUTPUT is not set" >&2
   exit 1
 fi
 
+# Keep for debugging
 pnpm changeset status;
 
 if pnpm changeset status 2>&1 | grep -q "Packages to be bumped at major"; then
