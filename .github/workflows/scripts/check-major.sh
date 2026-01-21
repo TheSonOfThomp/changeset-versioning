@@ -16,15 +16,15 @@ if [ -z "${GITHUB_OUTPUT:-}" ]; then
   exit 1
 fi
 
-# Run changeset status once and check for major changes
-# Capture output to check for major changes
-STATUS_OUTPUT=$(pnpm changeset status 2>&1 || true)
+# Capture and clean output, stripping ANSI color codes that interfere with grep
+STATUS_OUTPUT=$(NO_COLOR=1 pnpm changeset status 2>&1 || true)
+CLEAN_OUTPUT=$(echo "$STATUS_OUTPUT" | sed 's/\x1b\[[0-9;]*m//g')
 
-# Check if the output contains major changes
-if echo "$STATUS_OUTPUT" | grep -q "Packages to be bumped at major"; then
+# Check for major changes
+if echo "$CLEAN_OUTPUT" | grep -q "Packages to be bumped at major"; then
   echo "has_major=true" >> "${GITHUB_OUTPUT}"
-  echo "Major changes detected in changesets: $STATUS_OUTPUT"
+  echo "Major changes detected in changesets: $CLEAN_OUTPUT"
 else
   echo "has_major=false" >> "${GITHUB_OUTPUT}"
-  echo "No major changes detected: $STATUS_OUTPUT"
+  echo "No major changes detected: $CLEAN_OUTPUT"
 fi
