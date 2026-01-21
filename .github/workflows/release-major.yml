@@ -32,18 +32,20 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # Create Release Pull Request or Publish
-      - name: Create Release Pull Request or Publish
-        uses: changesets/action@v1
+      - name: Exit changeset pre mode
+        run: |
+          pnpm changeset pre exit || echo "Pre mode may already be active"
+
+      - name: Check for changesets and version packages
+        id: version
+        run: .github/workflows/scripts/version-packages.sh
+
+      - name: Create Major Release PR
+        if: steps.version.outputs.version_updated == 'true'
+        uses: peter-evans/create-pull-request@v5
         with:
-          # On every PR to `next`, create a Major Release PR targeted at main.
-          # The changesets action uses baseBranch from .changeset/config.json (set to "main")
-          # to determine the target branch for the release PR.
+          branch: changesets/major
           title: "🦋 MAJOR_RELEASE"
-          version: pnpm changeset version
-          # When the Major Release PR is merged
-          publish: pnpm changeset publish
-          commit: "chore: version packages for major release"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          base: main
+          commit-message: "chore: version packages for major release"
+          token: ${{ secrets.GITHUB_TOKEN }}
