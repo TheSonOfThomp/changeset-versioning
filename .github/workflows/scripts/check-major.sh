@@ -25,8 +25,6 @@ echo $STATUS_OUTPUT;
 
 # Check if the output contains major changes
 if echo "$STATUS_OUTPUT" | grep -q "Packages to be bumped at major"; then
-
-if pnpm changeset status 2>&1 | grep -q "Packages to be bumped at major"; then
   echo "has_major=true" >> "${GITHUB_OUTPUT}"
   echo "Major changes detected in changesets"
 else
