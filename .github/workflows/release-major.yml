@@ -32,6 +32,10 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Exit changeset pre mode
+        run: |
+          pnpm changeset pre exit || echo "Pre mode may already be active"
+
       # Create Release Pull Request or Publish
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
