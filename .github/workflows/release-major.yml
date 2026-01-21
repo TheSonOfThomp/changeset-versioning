@@ -36,40 +36,16 @@ jobs:
         run: |
           pnpm changeset pre exit || echo "Pre mode may already be active"
 
-      # Create Release Pull Request or Publish
-      - name: Create Release Pull Request or Publish
-        uses: changesets/action@v1
+      - name: Check for changesets and version packages
+        id: version
+        run: .github/workflows/scripts/version-packages.sh
+
+      - name: Create Major Release PR
+        if: steps.version.outputs.version_updated == 'true'
+        uses: peter-evans/create-pull-request@v5
         with:
-          # On every PR to `next`, create a Major Release PR targeted at main.
-          # Note: The changesets action will initially target the current branch (next),
-          # but we'll change it to main in the next step.
+          branch: changesets/major
           title: "🦋 MAJOR_RELEASE"
-          version: pnpm changeset version
-          # When the Major Release PR is merged
-          publish: pnpm changeset publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Change PR target branch to main
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const headBranch = `changeset-release/${context.ref.replace('refs/heads/', '')}`;
-            const { data: prs } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              head: headBranch
-            });
-
-            const pr = prs.find(p => p.title === '🦋 MAJOR_RELEASE');
-            if (pr && pr.base.ref !== 'main') {
-              await github.rest.pulls.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: pr.number,
-                base: 'main'
-              });
-              console.log(`Changed PR #${pr.number} target from ${pr.base.ref} to main`);
-            }
+          base: main
+          commit-message: "chore: version packages for major release"
+          token: ${{ secrets.GITHUB_TOKEN }}
