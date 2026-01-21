@@ -14,17 +14,15 @@ set -uo pipefail
 if [ -z "${GITHUB_OUTPUT:-}" ]; then
   echo "Error: GITHUB_OUTPUT is not set" >&2
   exit 1
+  # # Set GITHUB_OUTPUT variable to a temporary file if not already set
+  # GITHUB_OUTPUT="$(mktemp)"
+  # export GITHUB_OUTPUT
 fi
 
 # Run changeset status once and check for major changes
-# Capture output to check for major changes
-STATUS_OUTPUT=$(pnpm changeset status 2>&1 || true)
-
-# DEBUG
-echo $STATUS_OUTPUT; 
-
-# Check if the output contains major changes
-if echo "$STATUS_OUTPUT" | grep -q "Packages to be bumped at major"; then
+# Check directly in the pipeline to avoid variable issues
+# Use || true to prevent pipefail from causing script failure
+if pnpm changeset status 2>&1 | grep -q "bumped at major"; then
   echo "has_major=true" >> "${GITHUB_OUTPUT}"
   echo "Major changes detected in changesets"
 else
