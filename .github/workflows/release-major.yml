@@ -4,11 +4,7 @@ name: Major Release
 # - open a "Major Release" PR targeted at `main`
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
+  push:
     branches:
       - next
 

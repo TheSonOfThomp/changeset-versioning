@@ -4,11 +4,7 @@ name: Patch Release
 # - open a "Patch Release" PR targeted at `main`
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
+  push:
     branches:
       - main
 
