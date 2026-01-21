@@ -1,7 +1,6 @@
 name: Pre-Release
 
-# On PRs into `next`
-# - open a "Pre-Release" PR targeted at `next`
+# On PRs into `next`, open a "Pre-Release" PR targeted at `next`
 
 on:
   push:
@@ -15,7 +14,6 @@ permissions:
 
 jobs:
   release:
-    name: "Pre-Release"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

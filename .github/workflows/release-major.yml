@@ -1,7 +1,6 @@
-name: Major Release
+name: Merge Next
 
-# On PRs into `next`
-# - open/updates a "Major Release" PR targeted at `main`
+# On PRs into `next`, open/update a merge PR targeted at `main`
 
 on:
   push:
@@ -15,7 +14,6 @@ permissions:
 
 jobs:
   release:
-    name: "Major Release"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,7 +30,7 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Create Major Release PR
+      - name: Create "Merge Next" PR
         uses: actions/github-script@v7
         with:
           script: |

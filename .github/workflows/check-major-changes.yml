@@ -1,5 +1,7 @@
 name: Check for Major Changes
 
+# For PRs into Main, checks for any Major changesets, and updates the base branch to `next`
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -12,7 +14,6 @@ permissions:
 
 jobs:
   check-major-changes:
-    name: Check for Major Changes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

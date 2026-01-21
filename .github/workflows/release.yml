@@ -1,7 +1,6 @@
-name: Patch Release
+name: Release
 
-# On PRs into main
-# - open a "Patch Release" PR targeted at `main`
+# On PRs into main open a Release PR targeted at `main`
 
 on:
   push:
@@ -15,7 +14,6 @@ permissions:
 
 jobs:
   release:
-    name: "Patch Release"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR branch
@@ -36,7 +34,7 @@ jobs:
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
         with:
-          title: "🦋 PATCH_RELEASE"
+          title: "🦋 RELEASE"
           version: pnpm changeset version
           # This executes the publish command defined in package.json
           publish: pnpm changeset publish
