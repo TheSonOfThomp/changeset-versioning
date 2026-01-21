@@ -1,5 +1,11 @@
 # @thesonofthomp/changeset-versioning-tools
 
+## 2.0.0
+
+### Major Changes
+
+- 8de4e32: Updates tool default export to array
+
 ## 1.0.0
 
 ### Major Changes

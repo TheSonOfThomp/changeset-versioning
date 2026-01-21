@@ -1,5 +1,11 @@
 # @thesonofthomp/changeset-versioning-components
 
+## 2.0.0
+
+### Major Changes
+
+- 8de4e32: Changes the default export to array
+
 ## 1.0.0
 
 ### Major Changes
