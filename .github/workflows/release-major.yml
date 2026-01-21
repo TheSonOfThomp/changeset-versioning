@@ -39,7 +39,6 @@ jobs:
       - name: Create Major Release PR
         uses: peter-evans/create-pull-request@v5
         with:
-          skip-if-pr-exists: true
           branch: changesets/major
           title: "🤖 Merge Next"
           base: main
