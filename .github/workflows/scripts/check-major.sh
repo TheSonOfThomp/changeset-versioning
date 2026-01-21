@@ -16,8 +16,15 @@ if [ -z "${GITHUB_OUTPUT:-}" ]; then
   exit 1
 fi
 
-# Keep for debugging
-pnpm changeset status;
+# Run changeset status once and check for major changes
+# Capture output to check for major changes
+STATUS_OUTPUT=$(pnpm changeset status 2>&1 || true)
+
+# DEBUG
+echo $STATUS_OUTPUT; 
+
+# Check if the output contains major changes
+if echo "$STATUS_OUTPUT" | grep -q "Packages to be bumped at major"; then
 
 if pnpm changeset status 2>&1 | grep -q "Packages to be bumped at major"; then
   echo "has_major=true" >> "${GITHUB_OUTPUT}"
